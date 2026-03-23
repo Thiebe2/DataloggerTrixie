@@ -186,7 +186,7 @@ if stel_vraag "Stap 6: Cronjobs instellen in jouw persoonlijke crontab?"; then
 
     # 1. Bestaande crontab ophalen, maar oude regels van dit project verwijderen
     # Zo voorkomen we dubbele regels als het script vaker wordt gedraaid.
-    crontab -l 2>/dev/null | grep -v "pythonscripts" | grep -v "Raspi25Temperatuur.png" > temp_cron || true
+    crontab -l 2>/dev/null | grep -v "pythonscripts" | grep -v "RaspiDagTemperatuur.png" > temp_cron || true
 
     # 2. De nieuwe regels toevoegen aan het tijdelijke bestand
     echo "" >> temp_cron
