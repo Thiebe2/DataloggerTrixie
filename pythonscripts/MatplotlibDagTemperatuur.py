@@ -42,7 +42,7 @@ try:
     plt.figure(figsize=(10, 7))
     plt.plot(dateandtime, temperature, marker='o', linestyle='-', markersize=2)
 
-    plt.title(f"Temperatuur Raspi25 - {vandaag}")
+    plt.title(f"Temperatuur RaspiTP - {vandaag}")
     plt.xlabel("Tijdstip")
     plt.ylabel("Graden Celsius")
     plt.grid(True)
