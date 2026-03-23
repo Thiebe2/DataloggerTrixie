@@ -1,70 +1,58 @@
 #!/usr/bin/python3
-
-#  Jan Moeskops - 22 september 2019
-#  MatplotlibTest2 : test toegang tot de database
-#   indien 4 keer per uur temperatuur gelogd wordt,
-#   dan zijn er 96 meetresultaten per dag
-#   toon de laatste dag,  zet foto in /var/www/html als sudo
-#  probleem: Matplotlib chooses Xwindows backend by default.
-#   You need to set matplotlib to not use the Xwindows backend.
-#  oplossing: https://stackoverflow.com/questions/37604289/tkinter-tclerror-no-display-name-and-no-display-environment-variable
-
-import os
-import matplotlib as mpl
-if os.environ.get('DISPLAY','') == '':
-    print('no display found. Using non-interactive Agg backend')
-    mpl.use('Agg')        # gebruik van Agg wanneer script start uit crontab
-import matplotlib.pyplot as plt
 import mysql.connector
+import matplotlib
+matplotlib.use('Agg') # Nodig voor draaien zonder scherm (headless)
+import matplotlib.pyplot as plt
 import time
-import shutil
+import os
+
+# Automatisch het pad naar de home-folder van de huidige gebruiker bepalen
+home_folder = os.path.expanduser("~")
+bestandsnaam = "RaspiWeekTemperatuur.png"
+temp_pad = os.path.join(home_folder, bestandsnaam)
+web_pad = os.path.join("/var/www/html", bestandsnaam)
 
 # Zoek datum vandaag
-vandaag=time.strftime("%d-%m-%Y, %H:%M")
-# vandaag=time.strftime("%Y-%m-%d")
-print(vandaag)
+vandaag = time.strftime("%d-%m-%Y, %H:%M")
+print(f"Grafiek genereren op: {vandaag}")
 
-# connect to MySQL database
-conn = mysql.connector.connect(host="localhost", user="logger", passwd="paswoord", db="temperatures")
+# Connect to MariaDB database
+try:
+    conn = mysql.connector.connect(
+        host="localhost",
+        user="logger",
+        passwd="paswoord",
+        db="temperatures"
+    )
+    cur = conn.cursor()
 
-# prepare a cursor
-cur = conn.cursor()
+    # Selecteer de laatste 672 metingen (7 dagen bij 96 metingen per dag)
+    query = "SELECT dateandtime, temperature FROM temperaturedata ORDER BY dateandtime DESC LIMIT 96"
+    cur.execute(query)
+    data = cur.fetchall()
 
-# in deze query selecteren we de 672 laatste metingen
-query = """
-SELECT dateandtime,temperature FROM temperaturedata
-ORDER BY dateandtime DESC LIMIT 672;
-"""
+    cur.close()
+    conn.close()
 
-# execute the query
-cur.execute(query)
+    # Data uitpakken (we draaien de data om zodat de tijd van links naar rechts loopt)
+    data.reverse()
+    dateandtime, temperature = zip(*data)
 
-# retrieve the whole result set
-data = cur.fetchall()
+    # Grafiek maken
+    plt.figure(figsize=(10, 7))
+    plt.plot(dateandtime, temperature, marker='o', linestyle='-', markersize=2)
 
-# close cursor and connection
-cur.close()
-conn.close()
+    plt.title(f"Temperatuur RaspiTP - {vandaag}")
+    plt.xlabel("Tijdstip")
+    plt.ylabel("Graden Celsius")
+    plt.grid(True)
 
-# unpack data in TimeStamp (x axis) and Pac (y axis)
-dateandtime, temperature = zip(*data)
+    # Automatisch de labels op de X-as schuin zetten voor leesbaarheid
+    plt.gcf().autofmt_xdate()
 
-##print(temperature, end='\n')
+    # Sla direct op in de web-map (werkt omdat we chmod 775 hebben gedaan in het installatiescript)
+    plt.savefig(web_pad, dpi=100)
+    print(f"Grafiek succesvol opgeslagen in: {web_pad}")
 
-# graph code, plot lijntjes,  scatter puntjes
-plt.plot(dateandtime, temperature)
-
-# set title, X/Y labels
-plt.title("Temperatuur"+" Raspi19 " + vandaag)
-plt.xlabel("Time of Day")
-plt.ylabel("graden Celsius")
-fig = plt.gcf()
-
-# plt.xticks(TimeStamp, (hour))
-fig.set_size_inches(10,7)
-plt.grid(True)
-plt.draw()
-
-# plt.show()
-plt.savefig('/home/pi19/temperatuurweek.png', dpi=100)
-
+except Exception as e:
+    print(f"Fout opgetreden: {e}")
