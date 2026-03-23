@@ -27,7 +27,7 @@ try:
     cur = conn.cursor()
 
     # Selecteer de laatste 672 metingen (7 dagen bij 96 metingen per dag)
-    query = "SELECT dateandtime, temperature FROM temperaturedata ORDER BY dateandtime DESC LIMIT 96"
+    query = "SELECT dateandtime, temperature FROM temperaturedata ORDER BY dateandtime DESC LIMIT 672"
     cur.execute(query)
     data = cur.fetchall()
 
