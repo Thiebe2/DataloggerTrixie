@@ -208,7 +208,7 @@ if stel_vraag "Stap 6: Cronjobs instellen in jouw persoonlijke crontab?"; then
     echo "2,17,32,47 * * * * sudo cp ~/RaspiDagVochtigheid.png /var/www/html/afbeeldingen/RaspiDagVochtigheid.png" >> temp_cron
     echo "2,17,32,47 * * * * sudo cp ~/RaspiWeekVochtigheid.png /var/www/html/afbeeldingen/RaspiWeekVochtigheid.png" >> temp_cron
     echo "2,17,32,47 * * * * sudo cp ~/RaspiMaandVochtigheid.png /var/www/html/afbeeldingen/RaspiMaandVochtigheid.png" >> temp_cron
-
+    echo "2,17,32,47 * * * * sudo chown www-data:www-data *
     # 3. Het tijdelijke bestand inladen als de nieuwe crontab
     crontab temp_cron
     rm temp_cron
