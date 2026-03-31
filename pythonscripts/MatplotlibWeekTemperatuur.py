@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import mysql.connector
 import matplotlib
-matplotlib.use('Agg') # Nodig voor draaien zonder scherm (headless)
+matplotlib.use('Agg')  # Nodig voor draaien zonder scherm (headless)
 import matplotlib.pyplot as plt
 import time
 import os
@@ -9,7 +9,6 @@ import os
 # Automatisch het pad naar de home-folder van de huidige gebruiker bepalen
 home_folder = os.path.expanduser("~")
 bestandsnaam = "RaspiWeekTemperatuur.png"
-temp_pad = os.path.join(home_folder, bestandsnaam)
 web_pad = os.path.join("/var/www/html", bestandsnaam)
 
 # Zoek datum vandaag
@@ -21,8 +20,8 @@ try:
     conn = mysql.connector.connect(
         host="localhost",
         user="logger",
-        passwd="paswoord",
-        db="temperatures"
+        password="paswoord",   # was: passwd=
+        database="temperatures" # was: db=
     )
     cur = conn.cursor()
 
@@ -30,29 +29,33 @@ try:
     query = "SELECT dateandtime, temperature FROM temperaturedata ORDER BY dateandtime DESC LIMIT 672"
     cur.execute(query)
     data = cur.fetchall()
-
     cur.close()
     conn.close()
 
-    # Data uitpakken (we draaien de data om zodat de tijd van links naar rechts loopt)
-    data.reverse()
-    dateandtime, temperature = zip(*data)
+    # Controleer of er data is
+    if not data:
+        print("Geen data gevonden in de database.")
+    else:
+        # Data omdraaien zodat de tijd van links naar rechts loopt
+        data.reverse()
+        dateandtime, temperature = zip(*data)
 
-    # Grafiek maken
-    plt.figure(figsize=(10, 7))
-    plt.plot(dateandtime, temperature, marker='o', linestyle='-', markersize=2)
+        # Grafiek maken
+        plt.figure(figsize=(10, 7))
+        plt.plot(dateandtime, temperature, marker='o', linestyle='-', markersize=2)
+        plt.title(f"Temperatuur RaspiTP - {vandaag}")
+        plt.xlabel("Tijdstip")
+        plt.ylabel("Graden Celsius")
+        plt.grid(True)
 
-    plt.title(f"Temperatuur RaspiTP - {vandaag}")
-    plt.xlabel("Tijdstip")
-    plt.ylabel("Graden Celsius")
-    plt.grid(True)
+        # X-as labels schuin zetten voor leesbaarheid
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()  # Voorkomt dat labels worden afgeknipt
 
-    # Automatisch de labels op de X-as schuin zetten voor leesbaarheid
-    plt.gcf().autofmt_xdate()
+        plt.savefig(web_pad, dpi=100)
+        print(f"Grafiek succesvol opgeslagen in: {web_pad}")
 
-    # Sla direct op in de web-map (werkt omdat we chmod 775 hebben gedaan in het installatiescript)
-    plt.savefig(web_pad, dpi=100)
-    print(f"Grafiek succesvol opgeslagen in: {web_pad}")
-
+except mysql.connector.Error as db_err:
+    print(f"Database fout: {db_err}")
 except Exception as e:
     print(f"Fout opgetreden: {e}")
