@@ -8,7 +8,7 @@ import os
 
 # Automatisch het pad naar de home-folder van de huidige gebruiker bepalen
 home_folder = os.path.expanduser("~")
-bestandsnaam = "RaspiWeekTemperatuur.png"
+bestandsnaam = "RaspiMaandTemperatuur.png"
 web_pad = os.path.join("/var/www/html", bestandsnaam)
 
 # Zoek datum vandaag
