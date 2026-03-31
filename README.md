@@ -72,7 +72,6 @@ Vóór de afronding biedt het script de mogelijkheid om oude data te importeren:
 ### STAP 5: Webserver Inrichten
 De bestanden uit je lokale `~/web/` map worden "live" gezet:
 * De bestanden worden gekopieerd naar `/var/www/html/`.
-* Er wordt een map `/var/www/html/afbeeldingen/` aangemaakt voor de grafieken.
 * De juiste rechten (`www-data`) worden toegekend zodat de webserver de bestanden kan lezen.
 
 ---
