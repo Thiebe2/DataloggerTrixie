@@ -156,9 +156,6 @@ fi
 if stel_vraag "Stap 5: Jouw web-ontwerp naar de webroot (/var/www/html) kopiëren?"; then
     print_titel "STAP 5: WEBSERVER CONFIGURATIE"
 
-    # Maak de benodigde mappen aan
-    sudo mkdir -p /var/www/html/afbeeldingen
-
     # TEST: Bestaat de standaard Apache index.html? Zo ja, verwijder deze.
     if [ -f /var/www/html/index.html ]; then
         echo "Standaard Apache index.html gevonden. Bezig met verwijderen..."
