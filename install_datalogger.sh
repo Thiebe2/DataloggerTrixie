@@ -202,12 +202,12 @@ if stel_vraag "Stap 6: Cronjobs instellen in jouw persoonlijke crontab?"; then
     echo "1,16,31,46 * * * * ~/pythonscripts/dhtvenv/bin/python ~/pythonscripts/MatplotlibMaandVochtigheid.py" >> temp_cron
     echo "" >> temp_cron
     echo "# Elke 15 minuten de afbeelding kopiëren naar webroot" >> temp_cron
-    echo "2,17,32,47 * * * * sudo cp ~/RaspiDagTemperatuur.png /var/www/html/afbeeldingen/RaspiDagTemperatuur.png" >> temp_cron
-    echo "2,17,32,47 * * * * sudo cp ~/RaspiWeekTemperatuur.png /var/www/html/afbeeldingen/RaspiWeekTemperatuur.png" >> temp_cron
-    echo "2,17,32,47 * * * * sudo cp ~/RaspiMaandTemperatuur.png /var/www/html/afbeeldingen/RaspiMaandTemperatuur.png" >> temp_cron
-    echo "2,17,32,47 * * * * sudo cp ~/RaspiDagVochtigheid.png /var/www/html/afbeeldingen/RaspiDagVochtigheid.png" >> temp_cron
-    echo "2,17,32,47 * * * * sudo cp ~/RaspiWeekVochtigheid.png /var/www/html/afbeeldingen/RaspiWeekVochtigheid.png" >> temp_cron
-    echo "2,17,32,47 * * * * sudo cp ~/RaspiMaandVochtigheid.png /var/www/html/afbeeldingen/RaspiMaandVochtigheid.png" >> temp_cron
+    echo "2,17,32,47 * * * * sudo cp ~/RaspiDagTemperatuur.png /var/www/html/RaspiDagTemperatuur.png" >> temp_cron
+    echo "2,17,32,47 * * * * sudo cp ~/RaspiWeekTemperatuur.png /var/www/html/RaspiWeekTemperatuur.png" >> temp_cron
+    echo "2,17,32,47 * * * * sudo cp ~/RaspiMaandTemperatuur.png /var/www/html/RaspiMaandTemperatuur.png" >> temp_cron
+    echo "2,17,32,47 * * * * sudo cp ~/RaspiDagVochtigheid.png /var/www/html/RaspiDagVochtigheid.png" >> temp_cron
+    echo "2,17,32,47 * * * * sudo cp ~/RaspiWeekVochtigheid.png /var/www/html/RaspiWeekVochtigheid.png" >> temp_cron
+    echo "2,17,32,47 * * * * sudo cp ~/RaspiMaandVochtigheid.png /var/www/html/RaspiMaandVochtigheid.png" >> temp_cron
     echo "2,17,32,47 * * * * sudo chown www-data:www-data *
     # 3. Het tijdelijke bestand inladen als de nieuwe crontab
     crontab temp_cron
